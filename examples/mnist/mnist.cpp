@@ -38,7 +38,7 @@ FactorGraph g;
 
 std::pair<std::shared_ptr< DTensorVar<mode, Dtype> >, std::shared_ptr< DTensorVar<mode, Dtype> > > BuildGraph()
 {
-	auto w1 = add_diff<DTensorVar>(pset, "w1", {785, 1024});	
+	auto w1 = add_diff<DTensorVar>(pset, "w1", {785, 1024});
 	auto w2 = add_diff<DTensorVar>(pset, "w2", {1025, 1024});
 	auto wo = add_diff<DTensorVar>(pset, "wo", {1025, 10});
 	w1->value.SetRandN(0, 0.01);

@@ -81,7 +81,7 @@ void FactorGraph::SequentialForward(std::vector< FactorGraph::VarPtr > targets,
 		q.pop();
 
 	for (size_t i = 0; i < factor_list.size(); ++i)
-	{		
+	{
 		auto& in_list = factorEdges[factor_list[i]->name].first;
 		n_pending[i] = in_list.size();
 		isFactorExecuted[i] = false;
@@ -90,7 +90,7 @@ void FactorGraph::SequentialForward(std::vector< FactorGraph::VarPtr > targets,
 	for (size_t i = 0; i < isReady.size(); ++i)
 		if (isReady[i])
 		{
-			auto& out_list = varEdges[var_list[i]->name].second;	
+			auto& out_list = varEdges[var_list[i]->name].second;
 			for (auto f : out_list)
 			{
 				auto& n_rest = n_pending[FacIdx(f)];
@@ -105,7 +105,7 @@ void FactorGraph::SequentialForward(std::vector< FactorGraph::VarPtr > targets,
 
 	while (!q.empty())
 	{
-		auto& cur_name = q.front();		
+		auto& cur_name = q.front();
 		q.pop();
 
 		auto& factor = factor_dict[cur_name].second;
@@ -124,8 +124,10 @@ void FactorGraph::SequentialForward(std::vector< FactorGraph::VarPtr > targets,
 		// std::cerr << factor->name << std::endl;
 		factor->Forward(operands, outputs);
 		isFactorExecuted[FacIdx(factor)] = true;
+		std::cerr << "In SequentialForward:" << std::endl; 
 		for (auto p : outputs)
 		{
+			std::cerr << "\tset " <<  p->name << " with idx " << VarIdx(p) << " as ready."<< std::endl;
 			isReady[VarIdx(p)] = true;
 			auto& out_list = varEdges[p->name].second;
 
@@ -145,17 +147,20 @@ void FactorGraph::SequentialForward(std::vector< FactorGraph::VarPtr > targets,
 FactorGraph::VarList FactorGraph::FeedForward(std::vector<FactorGraph::VarPtr> targets, 
 											std::map<std::string, void*> feed_dict,
 											uint n_thread)
-{	
+{
 	DependencyParse(targets);
 	isReady.resize(var_dict.size());
 	for (size_t i = 0; i < isReady.size(); ++i)
 		isReady[i] = false;	
 
-	for (auto st : ready_dict)
+	for (auto st : ready_dict){
+		std::cerr << "From ready_dict, setting " << VarIdx(st.first) << " to ready." << std::endl;
 		isReady[VarIdx(st.first)] = true;
+	}
 
 	for (auto p : feed_dict)
 	{
+		std::cerr << "From feed_dict, setting " << VarIdx(p.first) << " to ready." << std::endl;
 		isReady[VarIdx(p.first)] = true;
 		var_dict[p.first].second->SetRef(p.second);
 	}
