@@ -102,12 +102,13 @@ void FactorGraph::SequentialForward(std::vector< FactorGraph::VarPtr > targets,
 				if (--n_rest == 0)
 				{
 					//std::cerr << "factor " << f->name << std::endl;
+					std::cerr << "Pushing factor in to queue: " << f->name << std::endl;
 					q.push(f->name);
 				}
 			}
 		}
 
-	std::cerr << "******The size of the queue is " << q.size() << std::endl;
+	//std::cerr << "******The size of the queue is " << q.size() << std::endl;
 
 	while (!q.empty())
 	{
