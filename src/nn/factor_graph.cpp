@@ -74,14 +74,18 @@ void FactorGraph::DependencyParse(std::vector<FactorGraph::VarPtr> targets)
 void FactorGraph::SequentialForward(std::vector< FactorGraph::VarPtr > targets, 
 									std::map<std::string, void*> feed_dict)
 {
+	std::cerr << "Inside SequentialForward: " << std::endl;
 	n_pending.resize(factor_list.size());
 	isFactorExecuted.resize(factor_list.size());
+	std::cerr << "isFactorExecuted length is " << isFactorExecuted.size() << std::endl;
 
 	while (!q.empty())
 		q.pop();
 
+	std::cerr << "Inside the factor list: " << std::endl;
 	for (size_t i = 0; i < factor_list.size(); ++i)
 	{
+		std::cerr << "Index " << i << " factor name: " << factor_list[i]->name << std::endl;
 		auto& in_list = factorEdges[factor_list[i]->name].first;
 		n_pending[i] = in_list.size();
 		isFactorExecuted[i] = false;
@@ -102,6 +106,8 @@ void FactorGraph::SequentialForward(std::vector< FactorGraph::VarPtr > targets,
 				}
 			}
 		}
+
+	std::cerr << "******The size of the queue is " << q.size() << std::endl;
 
 	while (!q.empty())
 	{
@@ -151,7 +157,7 @@ FactorGraph::VarList FactorGraph::FeedForward(std::vector<FactorGraph::VarPtr> t
 	DependencyParse(targets);
 	isReady.resize(var_dict.size());
 	for (size_t i = 0; i < isReady.size(); ++i)
-		isReady[i] = false;	
+		isReady[i] = false;
 
 	for (auto st : ready_dict){
 		std::cerr << "From ready_dict, setting " << VarIdx(st.first) << " to ready." << std::endl;
