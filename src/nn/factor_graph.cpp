@@ -124,7 +124,7 @@ void FactorGraph::SequentialForward(std::vector< FactorGraph::VarPtr > targets,
 		// std::cerr << factor->name << std::endl;
 		factor->Forward(operands, outputs);
 		isFactorExecuted[FacIdx(factor)] = true;
-		std::cerr << "In SequentialForward:" << std::endl; 
+		std::cerr << "In SequentialForward with name " << cur_name <<" :" << std::endl; 
 		for (auto p : outputs)
 		{
 			std::cerr << "\tset " <<  p->name << " with idx " << VarIdx(p) << " as ready."<< std::endl;
