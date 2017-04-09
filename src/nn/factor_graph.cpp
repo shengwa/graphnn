@@ -108,7 +108,7 @@ void FactorGraph::SequentialForward(std::vector< FactorGraph::VarPtr > targets,
 			}
 		}
 
-	//std::cerr << "******The size of the queue is " << q.size() << std::endl;
+	std::cerr << "******The size of the queue is " << q.size() << std::endl;
 
 	while (!q.empty())
 	{
