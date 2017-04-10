@@ -65,10 +65,20 @@ void FactorGraph::DependencyParse(std::vector<FactorGraph::VarPtr> targets)
 				if (!isRequired[VarIdx(p)])
 				{
 					isRequired[VarIdx(p)] = true;
-					q.push(p->name);	
+					q.push(p->name);
 				}
 		}
 	}
+
+	int count = 0;
+
+	for(unsigned int i = 0; i < isRequired.size(); ++i){
+		if(isRequired[i]){
+			++count;
+		}
+	}
+
+	std::cerr << "The required Var number in isRequired is " << count << std::endl;
 }
 
 void FactorGraph::SequentialForward(std::vector< FactorGraph::VarPtr > targets, 
@@ -110,25 +120,44 @@ void FactorGraph::SequentialForward(std::vector< FactorGraph::VarPtr > targets,
 
 	std::cerr << "******The size of the queue is " << q.size() << std::endl;
 
+	std::cerr << "Before while loop on the queue." << std::endl;
+
 	while (!q.empty())
 	{
+		// q.pop();
 		auto& cur_name = q.front();
+		std::cerr << "current name: " << cur_name << std::endl;
 		q.pop();
+
+		// see the factor dict:
+		std::cerr << "Inside the factor_dict: " << std::endl;
+		for (auto p: factor_dict){
+			std::cerr << "\tcurrent factor : " << p.first << std::endl;
+		}
+
+		//for (auto p: )
 
 		auto& factor = factor_dict[cur_name].second;
 		auto& operands = factorEdges[cur_name].first;
 		auto& outputs = factorEdges[cur_name].second;
 
+		std::cerr << "gathered all the information(factor operands outputs)" << std::endl;
+		std::cerr << "outputs size is " << outputs.size() << std::endl;
+
 		bool necessary = false;
-		for (auto p : outputs)
+		for (auto p : outputs){
+			std::cerr << "current output name: " << p->name << std::endl;
 			if (isRequired[VarIdx(p)])
 			{
 				necessary = true;
 				break;
 			}
+		}
+		std::cerr << "If necessary ? " << necessary << std::endl;
 		if (!necessary)
 			continue;
 		// std::cerr << factor->name << std::endl;
+		std::cerr << "before Forwarding operands and outputs" << std::endl;
 		factor->Forward(operands, outputs);
 		isFactorExecuted[FacIdx(factor)] = true;
 		std::cerr << "In SequentialForward with name " << cur_name <<" :" << std::endl; 
